@@ -13,9 +13,9 @@
 |SDA|A4|
 |SCL|A5|
 
-**Tabel wiring sensor MQ-7**
+**Tabel wiring sensor MQ-7 / MQ-135**
 
-|**Pin MQ-7**|**Pin Arduino**|
+|**Pin Sensor**|**Pin Arduino**|
 | :- | :- |
 |VCC|5V|
 |GND|GND|
