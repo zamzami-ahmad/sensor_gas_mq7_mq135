@@ -1,4 +1,4 @@
-**Modul sensnor gas Arduino**
+**Modul sensor gas MQ-7 dan MQ-135 Arduino**
 
 **Wiring diagram**
 
