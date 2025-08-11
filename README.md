@@ -33,7 +33,7 @@
 
 |**Pin modul SD Card**|**Pin Arduino**|
 | :- | :- |
-|VCC|3,3 V|
+|VCC|5 V|
 |GND|GND|
 |MISO|D12|
 |MOSI|D11|
