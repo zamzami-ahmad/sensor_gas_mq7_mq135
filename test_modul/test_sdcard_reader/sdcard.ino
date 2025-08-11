@@ -1,46 +1,52 @@
 #include <SPI.h>
 #include <SD.h>
 
-const int chipSelect = 10; // Pin CS SD Card
-File dataFile;
+const int chipSelect = 10;
 
 void setup() {
   Serial.begin(9600);
-
-   if (!SD.begin(chipSelect)) {
-    Serial.println("Gagal menginisialisasi SD card.");
-    while (1); // Hentikan program
+  while (!Serial) {
+    ;
   }
-
-  Serial.println("SD card berhasil diinisialisasi.");
-
-  // Buat header jika file belum ada
-  if (!SD.exists("log.csv")) {
-    dataFile = SD.open("log.csv", FILE_WRITE);
-    if (dataFile) {
-      dataFile.println("ID,Nilai,Status");
-      dataFile.close();
-      Serial.println("File log.csv dibuat dengan header.");
+  
+  Serial.println("=== SD CARD TEST ===");
+  
+  // Test inisialisasi dengan berbagai pin
+  int pins[] = {4, 8, 10, 53}; // Pin yang umum digunakan
+  int numPins = sizeof(pins) / sizeof(pins[0]);
+  
+  for (int i = 0; i < numPins; i++) {
+    Serial.print("Testing pin ");
+    Serial.print(pins[i]);
+    Serial.print("... ");
+    
+    if (SD.begin(pins[i])) {
+      Serial.println("BERHASIL!");
+      Serial.print("SD Card Type: ");
+      
+      Sd2Card card;
+      SdVolume volume;
+      
+      if (card.init(SPI_HALF_SPEED, pins[i])) {
+        Serial.print("SD");
+        Serial.println(card.type() == SD_CARD_TYPE_SD1 ? "1" : 
+                      card.type() == SD_CARD_TYPE_SD2 ? "2" : "HC");
+        
+        if (volume.init(card)) {
+          Serial.print("Volume size (MB): ");
+          Serial.println(volume.blocksPerCluster() * volume.clusterCount() * 512 / 1000000.0);
+        }
+      }
+      return;
+    } else {
+      Serial.println("gagal");
     }
+    delay(100);
   }
+  
+  Serial.println("Semua pin gagal. Periksa wiring dan SD card.");
 }
-
 
 void loop() {
-  //menyimpan data secara manual
-  dataFile = SD.open("log.csv", FILE_WRITE);
-  if (dataFile) {
-    dataFile.print(1);
-    dataFile.print(",");
-    dataFile.print(500);
-    dataFile.print(",");
-    dataFile.println("Bahaya");
-    dataFile.close();
-    Serial.println("Data disimpan ke SD card.");
-  } else {
-    Serial.println("Gagal menulis ke file log.csv.");
-  }
-
-  delay(5000);
+  // Kosong
 }
-
