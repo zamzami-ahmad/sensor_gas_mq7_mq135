@@ -7,10 +7,9 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  tone(buzzer, 3000); // A4
-  delay(200);
-
-  noTone(buzzer); // B4
-  delay(200);
+  digitalWrite(buzzer, HIGH);
+  delay(500);
+  digitalWrite(buzzer, LOW);
+  delay(500);
+  
 }
-
