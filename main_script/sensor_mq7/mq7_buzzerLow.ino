@@ -9,12 +9,12 @@ int buzzerPin = 2;
 
 int sensorValue = 0;
 float voltage = 0;
-float ppm = 0;
+float ppm;
 int warningCount = 0;
 
 // Konstanta kalibrasi
 const float RL = 10.0;
-const float R0 = 1.56;
+float R0;
 
 // Variabel untuk non-blocking buzzer
 unsigned long previousMillis = 0;
@@ -68,7 +68,7 @@ void loop() {
     float RS = ((5.0 * RL) / voltage) - RL;
     float ratio = RS / R0;
     
-    ppm = pow((ratio / 0.5), -1.5) * 100;
+    ppm = pow(ratio, -1.518) * 99.042;
     if(ppm < 0) ppm = 0;
 
     // Update LCD
@@ -113,7 +113,7 @@ void loop() {
     else {
       lcd.print("AMAN");
       currentMode = 0;
-      digitalWrite(buzzerPin, HIGH);
+      digitalWrite(buzzerPin, HIGH); // Matikan buzzer
       if (dataFile) {
         dataFile.print(ppm);
         dataFile.print(",");
@@ -171,13 +171,14 @@ void calibrateSensor() {
   
   float avgRS = total / 50;
   float newR0 = avgRS / 0.5;
+  R0 = newR0;
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Calibration");
   lcd.setCursor(0, 1);
   lcd.print("Complete!");
   Serial.print("Nilai R0 kalibrasi: ");
-  Serial.println(newR0);
+  Serial.println(R0);
   delay(2000);
 }
 
