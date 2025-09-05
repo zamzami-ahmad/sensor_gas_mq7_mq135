@@ -9,12 +9,12 @@ int buzzerPin = 2;
 
 int sensorValue = 0;
 float voltage = 0;
-float ppm;
+float ppm = 0;
 int warningCount = 0;
 
 // Konstanta kalibrasi
 const float RL = 10.0;
-float R0;
+float R0 = 1.56;
 
 // Variabel untuk non-blocking buzzer
 unsigned long previousMillis = 0;
@@ -68,7 +68,7 @@ void loop() {
     float RS = ((5.0 * RL) / voltage) - RL;
     float ratio = RS / R0;
     
-    ppm = pow(ratio, -1.518) * 99.042;
+    ppm = pow((ratio / 1), -1.5) * 100;
     if(ppm < 0) ppm = 0;
 
     // Update LCD
@@ -82,7 +82,7 @@ void loop() {
     // Tentukan mode berdasarkan PPM
     lcd.setCursor(0, 1);
     dataFile = SD.open("log.csv", FILE_WRITE);
-    if(ppm >= 400 && ppm <= 1000){
+    if(ppm >= 10 && ppm <= 500){
       lcd.print("WASPADA!!");
       currentMode = 1;
       buzzerInterval = 500; // 500ms interval untuk waspada
@@ -96,7 +96,7 @@ void loop() {
         Serial.println("Gagal menulis ke file log.csv.");
       }
     }
-    else if(ppm > 1000){
+    else if(ppm > 500){
       lcd.print("BAHAYA!!");
       currentMode = 1;
       buzzerInterval = 200; // 200ms interval untuk bahaya
@@ -113,7 +113,7 @@ void loop() {
     else {
       lcd.print("AMAN");
       currentMode = 0;
-      digitalWrite(buzzerPin, HIGH); // Matikan buzzer
+      digitalWrite(buzzerPin, HIGH);
       if (dataFile) {
         dataFile.print(ppm);
         dataFile.print(",");
@@ -170,8 +170,7 @@ void calibrateSensor() {
   }
   
   float avgRS = total / 50;
-  float newR0 = avgRS / 0.5;
-  R0 = newR0;
+  float R0 = avgRS / 1;
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Calibration");
